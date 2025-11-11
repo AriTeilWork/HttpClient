@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace JokeConsole
 {
-    public class JokeService : IJokeService
+    public class JokeServiceJokeDevApi2 : IJokeService
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient;
+
+        public JokeServiceJokeDevApi2(HttpClient httpClient)
+        {
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        }
 
         public async Task<List<Joke>> GetJokesAsync()
         {
@@ -27,31 +32,36 @@ namespace JokeConsole
                 {
                     foreach (var item in jokesElement.EnumerateArray())
                     {
-                        if (item.GetProperty("type").GetString() == "single")
+                        string type = item.GetProperty("type").GetString();
+                        if (type == "single")
                         {
-                            jokes.Add(new Joke { Content = item.GetProperty("joke").GetString() });
+                            jokes.Add(new OneLiner { Content = item.GetProperty("joke").GetString() ?? string.Empty });
                         }
                         else
                         {
-                            string setup = item.GetProperty("setup").GetString();
-                            string delivery = item.GetProperty("delivery").GetString();
-                            jokes.Add(new Joke { Content = $"{setup} - {delivery}" });
+                            jokes.Add(new TwoLiner
+                            {
+                                Setup = item.GetProperty("setup").GetString() ?? string.Empty,
+                                Delivery = item.GetProperty("delivery").GetString() ?? string.Empty
+                            });
                         }
                     }
                 }
                 else
                 {
-                    // If the API returns a single joke object
                     var root = doc.RootElement;
-                    if (root.GetProperty("type").GetString() == "single")
+                    string type = root.GetProperty("type").GetString();
+                    if (type == "single")
                     {
-                        jokes.Add(new Joke { Content = root.GetProperty("joke").GetString() });
+                        jokes.Add(new OneLiner { Content = root.GetProperty("joke").GetString() ?? string.Empty });
                     }
                     else
                     {
-                        string setup = root.GetProperty("setup").GetString();
-                        string delivery = root.GetProperty("delivery").GetString();
-                        jokes.Add(new Joke { Content = $"{setup} - {delivery}" });
+                        jokes.Add(new TwoLiner
+                        {
+                            Setup = root.GetProperty("setup").GetString() ?? string.Empty,
+                            Delivery = root.GetProperty("delivery").GetString() ?? string.Empty
+                        });
                     }
                 }
 
@@ -59,10 +69,9 @@ namespace JokeConsole
             }
             catch (Exception ex)
             {
-                // On error, return a fallback list
                 return new List<Joke>
                 {
-                    new Joke{ Content = "Could not fetch jokes: " + ex.Message }
+                    new OneLiner{ Content = "Could not fetch jokes: " + ex.Message }
                 };
             }
         }
