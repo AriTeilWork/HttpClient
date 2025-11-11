@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
+using LMA.Interfaces;
+using LMA.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace JokeConsole
 {
@@ -9,8 +12,17 @@ namespace JokeConsole
     {
         static async Task Main(string[] args)
         {
-            using var httpClient = new HttpClient();
-            IJokeService jokeService = new JokeServiceJokeDevApi2(httpClient);
+            using IHost host = Host.CreateDefaultBuilder(args)
+                .ConfigureServices(services =>
+                {
+                    // Register a single HttpClient for ApiService and map IJokeService to ApiService
+                    services.AddHttpClient<IJokeService, ApiService>();
+                })
+                .Build();
+
+            // Resolve the service from DI
+            var jokeService = host.Services.GetRequiredService<IJokeService>();
+
             List<Joke> jokes = await jokeService.GetJokesAsync();
 
             Console.WriteLine("Jokes:");
@@ -21,6 +33,8 @@ namespace JokeConsole
                 Console.WriteLine($"{i}. {joke}");
                 i++;
             }
+
+            await host.StopAsync();
         }
     }
 }

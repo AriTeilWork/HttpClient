@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using JokeConsole;
+using LMA.Interfaces;
 
-namespace JokeConsole
+namespace LMA.Services
 {
-    public class JokeServiceJokeDevApi2 : IJokeService
+    public class ApiService : IJokeService
     {
         private readonly HttpClient _httpClient;
 
-        public JokeServiceJokeDevApi2(HttpClient httpClient)
+        public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
