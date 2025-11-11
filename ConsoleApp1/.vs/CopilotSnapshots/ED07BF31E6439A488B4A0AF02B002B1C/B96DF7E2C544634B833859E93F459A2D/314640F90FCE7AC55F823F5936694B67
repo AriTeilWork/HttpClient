@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace JokeConsole
+{
+    internal class Program
+    {
+        static async Task Main(string[] args)
+        {
+            IJokeService jokeService = new JokeService();
+            List<Joke> jokes = await jokeService.GetJokesAsync();
+
+            Console.WriteLine("Jokes:");
+
+            int i = 1;
+            foreach (Joke joke in jokes)
+            {
+                Console.WriteLine($"{i}. {joke.Content}");
+                i++;
+            }
+        }
+    }
+}

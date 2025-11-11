@@ -1,0 +1,40 @@
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+*.rsuser
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider IDE
+.idea/
+
+# NuGet Packages
+*.nupkg
+packages/
+*.snupkg
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dotnet
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# JetBrains Rider
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
